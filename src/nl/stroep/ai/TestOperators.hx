@@ -12,7 +12,7 @@ class TestOperators
 	
 	static function main() 
 	{
-		new TestSudoku();
+		new TestOperators();
 	}
 	
 	public function new()
@@ -24,20 +24,16 @@ class TestOperators
 		js.Browser.document.body.appendChild(script);
 		#end
 		
-		
-		var outputs = [0, 0, 0, 1];
-		//var exercise = new Exercise(0, 0.0005);
 		var exercise = new Exercise(0, 0.005);
-		exercise.addPatterns([0, 0], [outputs[0]]);
-		exercise.addPatterns([0, 1], [outputs[1]]);
-		exercise.addPatterns([1, 0], [outputs[2]]);
-		exercise.addPatterns([1, 1], [outputs[3]]);
+		exercise.addPatterns([0, 0], [0]);
+		exercise.addPatterns([0, 1], [0]);
+		exercise.addPatterns([1, 0], [0]);
+		exercise.addPatterns([1, 1], [1]);
 		
 		trace("starting exercise. " + outputs);
 		
 		net = new BackPropagationNet();
 		net.create(2, 1, 2, 5);
-		net.run([1, 1]);
 		
 		net.startTraining(exercise);
 		
@@ -51,20 +47,4 @@ class TestOperators
 			trace("epoch complete: " + result);
 		}
 	}
-	
-	static function resetNet(net:BackPropagationNet)
-	{
-		for (layer in net.layers)
-		{
-			for (neuron in layer.neurons)
-			{
-				for (synapse in neuron.synapses)
-				{
-					synapse.resetWeight();
-				}
-			}
-		}
-	}
-	
-	
 }
