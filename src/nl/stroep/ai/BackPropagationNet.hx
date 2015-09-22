@@ -9,7 +9,8 @@ import nl.stroep.ai.training.TrainingState;
 import nl.stroep.ai.util.AsyncProcessor;
 
 /**
- * ...
+ * Ported from https://github.com/dyvoid/imotion-library/tree/master/nl/imotion/neuralnetwork (MIT)
+ *
  * @author Mark Knol
  */
 class BackPropagationNet
