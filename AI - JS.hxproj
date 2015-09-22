@@ -22,7 +22,7 @@
     <option directives="" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
-    <option mainClass="nl.stroep.ai.TestMath" />
+    <option mainClass="nl.stroep.ai.TestOperators" />
     <option enabledebug="False" />
     <option additional="-dce full" />
   </build>
