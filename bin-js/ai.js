@@ -1,20 +1,9 @@
 (function (console) { "use strict";
-function $extend(from, fields) {
-	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
-	for (var name in fields) proto[name] = fields[name];
-	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
-	return proto;
-}
 Math.__name__ = true;
 var Std = function() { };
 Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
-};
-var haxe_Log = function() { };
-haxe_Log.__name__ = true;
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
 };
 var haxe_Timer = function(time_ms) {
 	var me = this;
@@ -35,37 +24,8 @@ haxe_Timer.prototype = {
 	,run: function() {
 	}
 };
-var js__$Boot_HaxeError = function(val) {
-	Error.call(this);
-	this.val = val;
-	this.message = String(val);
-	if(Error.captureStackTrace) Error.captureStackTrace(this,js__$Boot_HaxeError);
-};
-js__$Boot_HaxeError.__name__ = true;
-js__$Boot_HaxeError.__super__ = Error;
-js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
-});
 var js_Boot = function() { };
 js_Boot.__name__ = true;
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -102,7 +62,6 @@ js_Boot.__string_rec = function(o,s) {
 		try {
 			tostr = o.toString;
 		} catch( e ) {
-			if (e instanceof js__$Boot_HaxeError) e = e.val;
 			return "???";
 		}
 		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
@@ -140,7 +99,7 @@ var nl_stroep_ai_BackPropagationNet = function(learningRate,momentumRate,jitterE
 	if(learningRate == null) learningRate = 0.25;
 	this.trainingState = 3;
 	this.error = 1;
-	this.trainingPriority = 1;
+	this.trainingPriority = .1;
 	this.fps = 5;
 	this.layers = [];
 	this.learningRate = learningRate;
@@ -154,8 +113,6 @@ nl_stroep_ai_BackPropagationNet.prototype = {
 	create: function(nrOfInputNeurons,nrOfOutputNeurons,nrOfHiddenLayers,nrOfNeuronsPerHiddenLayer) {
 		if(nrOfNeuronsPerHiddenLayer == null) nrOfNeuronsPerHiddenLayer = 0;
 		if(nrOfHiddenLayers == null) nrOfHiddenLayers = 0;
-		if(nrOfInputNeurons == 0) throw new js__$Boot_HaxeError("Cannot create a BackPropagationNet with less than 1 input neuron");
-		if(nrOfOutputNeurons == 0) throw new js__$Boot_HaxeError("Cannot create a BackPropagationNet with less than 1 output neuron");
 		this.layers = [];
 		this.layers.push(new nl_stroep_ai_neural_Layer(nrOfInputNeurons));
 		var _g = 0;
@@ -198,7 +155,6 @@ nl_stroep_ai_BackPropagationNet.prototype = {
 		if(this._currTrainingResult == null) return true;
 		var jitter = 0.0;
 		if(this.jitterEpoch != 0 && this._currTrainingResult.epochs != 0 && this._currTrainingResult.epochs % this.jitterEpoch == 0) jitter = Math.random() * 0.02 - 0.01;
-		haxe_Log.trace("result",{ fileName : "BackPropagationNet.hx", lineNumber : 170, className : "nl.stroep.ai.BackPropagationNet", methodName : "doExercise", customParams : [this._currTrainingResult.toString()]});
 		while(this._currExercise.hasNext()) {
 			var patterns = this._currExercise.next();
 			var result = this.run(patterns.inputPattern);
@@ -276,51 +232,54 @@ nl_stroep_ai_BackPropagationNet.prototype = {
 	}
 };
 var nl_stroep_ai_TestMath = function() {
+	this.data = [[1,0.5,0,0,0.5],[.1,.5],[0.5,1,0.5,0,0],[.2,.4],[0,0.5,1,0.5,0],[.3,.3],[0,0,0.5,1,0.5],[.4,.2],[0.5,0,0,0.5,1],[.5,.1]];
 	var _g = this;
-	var getInts = function(s) {
-		var _g1 = [];
-		var _g11 = 0;
-		var _g2 = s.split("");
-		while(_g11 < _g2.length) {
-			var v = _g2[_g11];
-			++_g11;
-			_g1.push(parseFloat(v) / 10);
-		}
-		return _g1;
-	};
-	var exercise = new nl_stroep_ai_training_Exercise(0,0.018);
-	exercise.addPatterns(getInts("1"),getInts("10"));
-	exercise.addPatterns(getInts("2"),getInts("20"));
-	exercise.addPatterns(getInts("3"),getInts("30"));
-	exercise.addPatterns(getInts("4"),getInts("40"));
-	exercise.addPatterns(getInts("5"),getInts("40"));
-	exercise.addPatterns(getInts("6"),getInts("40"));
-	exercise.addPatterns(getInts("7"),getInts("40"));
-	exercise.addPatterns(getInts("8"),getInts("40"));
+	console.log("start exercise");
+	var exercise = new nl_stroep_ai_training_Exercise(0,0.000005);
+	var index = 0;
+	while(index < this.data.length) {
+		var input = this.data[index];
+		var output = this.data[index + 1];
+		exercise._patterns.push(new nl_stroep_ai_training_ExercisePattern(input,output));
+		index += 2;
+	}
+	console.log("data: " + Std.string(this.data));
 	this.net = new nl_stroep_ai_BackPropagationNet();
-	this.net.create(1,2,4,5);
+	this.net.create(this.data[0].length,this.data[1].length,2,5);
 	this.net.startTraining(exercise);
 	this.net.onTrainingComplete = function(result) {
-		haxe_Log.trace("training complete: " + Std.string(result),{ fileName : "TestMath.hx", lineNumber : 50, className : "nl.stroep.ai.TestMath", methodName : "new"});
-		var test = _g.net.run(getInts("20"));
-		haxe_Log.trace(test,{ fileName : "TestMath.hx", lineNumber : 52, className : "nl.stroep.ai.TestMath", methodName : "new"});
-		var result1;
-		var _g12 = [];
-		var _g21 = 0;
-		while(_g21 < test.length) {
-			var v1 = test[_g21];
-			++_g21;
-			_g12.push((v1 * 1000 | 0) / 100);
-		}
-		result1 = _g12;
-		haxe_Log.trace(result1,{ fileName : "TestMath.hx", lineNumber : 54, className : "nl.stroep.ai.TestMath", methodName : "new"});
-	};
-	this.net.onEpochComplete = function(result2) {
+		console.log("training complete: " + Std.string(result));
+		var testResult = _g.net.run([0,1,1,1,0]);
+		console.log("test result: " + Std.string(testResult));
+		_g.reverseTest(testResult);
 	};
 };
 nl_stroep_ai_TestMath.__name__ = true;
 nl_stroep_ai_TestMath.main = function() {
 	new nl_stroep_ai_TestMath();
+};
+nl_stroep_ai_TestMath.prototype = {
+	reverseTest: function(testResult) {
+		console.log("\n\nstart reversed");
+		var exercise = new nl_stroep_ai_training_Exercise(0,0.000005);
+		var index = 0;
+		while(index < this.data.length) {
+			var input = this.data[index + 1];
+			var output = this.data[index];
+			exercise._patterns.push(new nl_stroep_ai_training_ExercisePattern(input,output));
+			index += 2;
+		}
+		console.log("data: " + Std.string(this.data));
+		var netReversed = new nl_stroep_ai_BackPropagationNet();
+		netReversed.create(this.data[1].length,this.data[0].length,2,5);
+		netReversed.run(testResult);
+		netReversed.startTraining(exercise);
+		netReversed.onTrainingComplete = function(result) {
+			console.log("training reversed complete: " + Std.string(result));
+			var testResultReversed = netReversed.run(testResult);
+			console.log("reversed test result: " + Std.string(testResultReversed));
+		};
+	}
 };
 var nl_stroep_ai_neural_Layer = function(numNeurons,inputLayer) {
 	this.neurons = [];
@@ -356,7 +315,6 @@ nl_stroep_ai_neural_Layer.prototype = {
 		return result;
 	}
 	,setValues: function(values) {
-		if(values.length != this.neurons.length) throw new js__$Boot_HaxeError("Number of input values do not match the amount of neurons in the layer");
 		var _g1 = 0;
 		var _g = this.neurons.length;
 		while(_g1 < _g) {
@@ -373,7 +331,6 @@ var nl_stroep_ai_neural_Neuron = function() {
 nl_stroep_ai_neural_Neuron.__name__ = true;
 nl_stroep_ai_neural_Neuron.prototype = {
 	calcActivation: function() {
-		if(this.synapses.length == 0) throw new js__$Boot_HaxeError("Unable to calculate a value. Neuron has no synapses connected to it");
 		this.value = 0.0;
 		var _g = 0;
 		var _g1 = this.synapses;
@@ -408,10 +365,7 @@ var nl_stroep_ai_training_Exercise = function(maxEpochs,maxError) {
 };
 nl_stroep_ai_training_Exercise.__name__ = true;
 nl_stroep_ai_training_Exercise.prototype = {
-	addPatterns: function(inputPattern,targetPattern) {
-		this._patterns.push(new nl_stroep_ai_training_ExercisePattern(inputPattern,targetPattern));
-	}
-	,next: function() {
+	next: function() {
 		return this._patterns[this._index++];
 	}
 	,hasNext: function() {
@@ -447,7 +401,7 @@ var nl_stroep_ai_util_AsyncProcessor = function(priority,fps) {
 	this._processTimer = new haxe_Timer(0);
 	this._timeError = 0.0;
 	this._totalTimeAllocation = 0.0;
-	this._priority = 1.0;
+	this._priority = 0.1;
 	this._priority = priority;
 	this._fps = fps;
 	if(this._fps != 0) this.updateAllocation(); else this.startFPSMeasurement();
@@ -513,7 +467,10 @@ nl_stroep_ai_util_AsyncProcessor.prototype = {
 		this._fpsMeter.onMeasureComplete = null;
 		this._fpsMeter = null;
 		this._isMeasuringFPS = false;
-		if(this._isRunning) this._processTimer.run = $bind(this,this.processTimerTickHandler);
+		if(this._isRunning) {
+			this._processTimer.stop();
+			this._processTimer.run = $bind(this,this.processTimerTickHandler);
+		}
 	}
 	,fpsMeasureCompleteHandler: function(measuredFps) {
 		if(measuredFps == 0) {
@@ -607,5 +564,3 @@ Array.__name__ = true;
 Date.__name__ = ["Date"];
 nl_stroep_ai_TestMath.main();
 })(typeof console != "undefined" ? console : {log:function(){}});
-
-//# sourceMappingURL=ai.js.map
