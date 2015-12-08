@@ -22,7 +22,7 @@ class BackPropagationNet
 	
 	
 	var jitterEpoch:Float;
-	var trainingPriority:Float = 1;
+	var trainingPriority:Float = .1;
 	var learningRate:Float;
 	var momentumRate:Float;
 	var error:Float = 1;
@@ -156,6 +156,20 @@ class BackPropagationNet
 		return finalTrainingResult;
 	}
 	
+	public function resetWeights()
+	{
+		for (layer in layers)
+		{
+			for (neuron in layer.neurons)
+			{
+				for (synapse in neuron.synapses)
+				{
+					synapse.resetWeight();
+				}
+			}
+		}
+	}
+	
 	public function doExercise()
 	{
 		var startTime = Timer.stamp();
@@ -167,7 +181,7 @@ class BackPropagationNet
 			jitter = Math.random() * 0.02 - 0.01;
 		}
 		
-		trace("result", _currTrainingResult.toString());
+		//trace("result", _currTrainingResult.toString());
 		while (_currExercise.hasNext())
 		{
 			//Grab next exercise patterns

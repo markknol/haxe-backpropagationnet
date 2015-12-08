@@ -12,7 +12,7 @@ class AsyncProcessor
 	public var isReady(get, never):Bool;
 	public var fps(get, set):Int;
 	
-	private var _priority = 1.0;
+	private var _priority = 0.1;
 
 	private var _totalTimeAllocation = 0.0;
 	private var _timeError = 0.0;
@@ -165,6 +165,7 @@ class AsyncProcessor
 
 		if (_isRunning)
 		{
+			_processTimer.stop();
 			_processTimer.run = processTimerTickHandler;
 		}
 	}
