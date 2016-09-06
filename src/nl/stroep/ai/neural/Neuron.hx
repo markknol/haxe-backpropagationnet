@@ -30,7 +30,7 @@ class Neuron
 		return value;
 	}
 	
-	inline function getSigmoid(value:Float):Float
+	inline static function getSigmoid(value:Float):Float
 	{
 		return 1 / (1 + Math.exp(-value));
 	}

@@ -13,7 +13,7 @@ class Exercise
 	var _index:Int = 0;
 	var _patterns:Array<ExercisePattern> = [];
 	
-	public function new( maxEpochs:Int = 0, maxError:Float = 0.0/*, useAsync:Bool = true*/ )
+	public inline function new( maxEpochs:Int = 0, maxError:Float = 0.0/*, useAsync:Bool = true*/ )
 	{
 		this.maxEpochs = maxEpochs;
 		this.maxError = maxError;

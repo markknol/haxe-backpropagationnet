@@ -6,7 +6,6 @@ import nl.stroep.ai.training.Exercise;
 import nl.stroep.ai.training.ExercisePattern;
 import nl.stroep.ai.training.TrainingResult;
 import nl.stroep.ai.training.TrainingState;
-import nl.stroep.ai.util.AsyncProcessor;
 
 /**
  * Ported from https://github.com/dyvoid/imotion-library/tree/master/nl/imotion/neuralnetwork (MIT)
@@ -31,7 +30,9 @@ class BackPropagationNet
 	var trainingState:TrainingState = TrainingState.STOPPED;
 	var _currExercise:Exercise;
 	var _currTrainingResult:TrainingResult;
-	var _asyncProcessor:AsyncProcessor;
+	#if async
+	var _asyncProcessor:nl.stroep.ai.util.AsyncProcessor;
+	#end
 	
 	
 	public function new(learningRate:Float = 0.25, momentumRate:Float = 0.5, jitterEpoch:Int = 1000)
@@ -40,8 +41,10 @@ class BackPropagationNet
 		this.momentumRate = momentumRate;
 		this.jitterEpoch = jitterEpoch;
 		
-		_asyncProcessor = new AsyncProcessor(trainingPriority, fps);
+		#if async
+		_asyncProcessor = new nl.stroep.ai.util.AsyncProcessor(trainingPriority, fps);
 		_asyncProcessor.addProcess(doExercise);
+		#end
 	}
 	
 	public function reset()
@@ -110,8 +113,11 @@ class BackPropagationNet
 		trainingState = TrainingState.STARTED;
 		_currExercise = exercise;
 		_currTrainingResult = new TrainingResult(error, 0);
-		
+		#if async
 		_asyncProcessor.start();
+		#else 
+		while (!doExercise()) { }
+		#end
 	}
 	
 	
@@ -119,7 +125,10 @@ class BackPropagationNet
 	{
 		if (trainingState != TrainingState.STARTED) return null;
 
+		#if async
 		_asyncProcessor.stop();
+		#end
+	
 		trainingState = TrainingState.PAUSED;
 
 		return _currTrainingResult;
@@ -130,7 +139,10 @@ class BackPropagationNet
 	{
 		if (trainingState != TrainingState.PAUSED) return;
 
+		#if async
 		_asyncProcessor.start();
+		#end 
+	
 		trainingState = TrainingState.STARTED;
 	}
 	
@@ -140,13 +152,13 @@ class BackPropagationNet
 		{
 			return null;
 		}
+		#if async
 		if (_asyncProcessor == null) return null;
-		
 		if (trainingState == TrainingState.STARTED)
 		{
 			 _asyncProcessor.stop();
 		}
-		
+		#end
 
 		var finalTrainingResult:TrainingResult = _currTrainingResult;
 		_currTrainingResult = null;
@@ -275,7 +287,9 @@ class BackPropagationNet
 	
 	private function set_fps(value:Int)
 	{
+		#if async
 		if (_asyncProcessor != null) _asyncProcessor.fps = value;
+		#end
 		return fps = value;
 	}
 }
