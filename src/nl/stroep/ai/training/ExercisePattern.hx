@@ -16,9 +16,6 @@ class ExercisePattern
 	}
 	
 #if debug
-	public function toString():String
-	{
-		return ["inputPattern=", inputPattern.join(","), "targetPattern=", targetPattern.join(",")].join(", ");
-	}
+	public function toString() return 'inputPattern=$inputPattern targetPattern=$targetPattern';
 #end
 }

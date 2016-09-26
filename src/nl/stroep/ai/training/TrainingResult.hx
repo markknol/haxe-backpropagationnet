@@ -12,7 +12,7 @@ class TrainingResult
 	public var epochs:Int;
 	public var trainingTime:Float;
 
-	public function new(startError:Float, endError:Float, epochs:Int = 0, trainingTime:Float = 0) 
+	public inline function new(startError:Float, endError:Float, epochs:Int = 0, trainingTime:Float = 0) 
 	{
 		this.startError = startError;
 		this.endError = endError;
@@ -20,9 +20,7 @@ class TrainingResult
 		this.trainingTime = trainingTime;
 	}
 	
-	public function toString() 
-	{
-		return ["startError="+startError, "endError="+endError, "epochs="+epochs, "trainingTime="+Std.int(trainingTime * 1000)/1000].join(" - ");
-	}
-	
+#if debug
+	public function toString() return 'startError=$startError endError=$endError epochs=$epochs trainingTime=${Std.int(trainingTime * 1000)/1000}';
+#end
 }

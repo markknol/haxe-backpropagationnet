@@ -53,11 +53,11 @@ class BackPropagationNet
 		
 		layers = [];
 		
-		error				= 1;
+		error = 1;
 		trainingPriority 	= 1;
-		learningRate		= 0.25;
-		momentumRate 	    = 0.5;
-		jitterEpoch        = 1000;
+		learningRate = 0.25;
+		momentumRate = 0.5;
+		jitterEpoch = 1000;
 	}
 	
 	public function create(nrOfInputNeurons:Int, nrOfOutputNeurons:Int, nrOfHiddenLayers:Int = 0, nrOfNeuronsPerHiddenLayer:Int = 0)
@@ -173,7 +173,7 @@ class BackPropagationNet
 	{
 		for (layer in layers)
 		{
-			for (neuron in layer.neurons)
+			for (neuron in layer.neurons())
 			{
 				for (synapse in neuron.synapses)
 				{
@@ -212,12 +212,12 @@ class BackPropagationNet
 				if (i == layers.length - 1)
 				{
 					//First calculate errors for output layers
-					for (j in 0 ... layer.neurons.length)
+					for (j in 0 ... layer.neurons().length)
 					{
 						var resultVal = result[j];
 						var targetVal = patterns.targetPattern[j];
 						var delta = (targetVal - resultVal);
-						layer.neurons[j].error = delta * resultVal * (1 - resultVal);
+						layer.neurons()[j].error = delta * resultVal * (1 - resultVal);
 						error += delta * delta;
 					}
 				}
@@ -225,15 +225,15 @@ class BackPropagationNet
 				{
 					//Calculate errors for hidden layers
 					var nextLayer:Layer = layers[i + 1];
-					for (j in 0 ... layer.neurons.length)
+					for (j in 0 ... layer.neurons().length)
 					{
 						var sum = 0.0;
-						for (nextLayerNeuron in nextLayer.neurons)
+						for (nextLayerNeuron in nextLayer.neurons())
 						{
 							sum += nextLayerNeuron.error * nextLayerNeuron.synapses[j].weight;
 						}
-						var neuronValue = layer.neurons[j].value;
-						layer.neurons[j].error = neuronValue * (1 - neuronValue) * sum;
+						var neuronValue = layer.neurons()[j].value;
+						layer.neurons()[j].error = neuronValue * (1 - neuronValue) * sum;
 						//trace("other:", sum, neuronValue, layer.neurons[j].error);
 					}
 				}
@@ -245,7 +245,7 @@ class BackPropagationNet
 			{
 				var layer = layers[i];
 				
-				for (neuron in layer.neurons)
+				for (neuron in layer.neurons())
 				{
 					for (synapse in neuron.synapses)
 					{

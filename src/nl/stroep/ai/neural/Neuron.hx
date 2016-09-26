@@ -6,8 +6,8 @@ package nl.stroep.ai.neural;
 class Neuron
 {
 	public var synapses:Array<Synapse> = [];
-	public var value:Float = 0;
-	public var error:Float = 1;
+	public var value:Float = 0.0;
+	public var error:Float = 1.0;
 	
 	public function new() 
 	{
@@ -36,9 +36,6 @@ class Neuron
 	}
 	
 #if debug
-	public function toString():String
-	{
-		return ["value=" + value, "error=" + error].join(", ");
-	}
+	public function toString() return 'value=$value error=$error';
 #end
 }

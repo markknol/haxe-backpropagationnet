@@ -38,7 +38,7 @@ class Synapse
 		weight = Math.random() * 2 - 1;
 	}
 	
-	public function getOutput():Float
+	public inline function getOutput():Float
 	{
 		//trace("startNeuron ", startNeuron.value, weight); 
 		return startNeuron.value * weight;
